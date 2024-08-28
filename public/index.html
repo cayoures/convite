@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JOSE ENRICO</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header id="titulo">
+        <h1>Jose enrico</h1>
+    </header>
+
+    <section id="home">
+
+        <div id="boas-vinda">
+            <h1>Olá, você está convidado para a festa de aniversário de [Nome]! Vamos comemorar juntos este momento especial.</h1>
+            <h2>[Informações adicionais sobre o evento]</h2>
+        </div>
+
+        <div id="info-map">
+            <h2>Data: 25/09/2024</h2>
+            <h2>Hora: 19:00</h2>
+            <h2>Local: [Endereço ou Localização]</h2>
+        </div>
+
+        <div id="map">
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3984.64865288427!2d-41.74297942594202!3d-2.9170191395810754!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x7ec3acaac2e94e5%3A0xe8060cba2b737057!2sR.%20Projetada%2053%2C%20975%20-%20Piau%C3%AD%2C%20Parna%C3%ADba%20-%20PI%2C%2064208-580!5e0!3m2!1spt-PT!2sbr!4v1724592478835!5m2!1spt-PT!2sbr" 
+                width="600" 
+                height="450" 
+                style="border:0;" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+        </div>
+
+        <h1>Lista de Presentes</h1>
+        <div class="gift-slider">
+            <button class="arrow left-arrow">&#10094;</button>
+            <div class="gift-container">
+                <div class="gift-item">
+                    <img src="img/gift1.jpg" alt="Presente 1">
+                    <p>Presente 1</p>
+                    <button onclick="showPixQRCode('[QRCodeURL1]')">Presentear</button>
+                </div>
+                <!-- Adicione mais itens conforme necessário -->
+            </div>
+            <button class="arrow right-arrow">&#10095;</button>
+        </div> 
+
+        <div id="confirmacao">
+            <h2>Confirme sua Presença</h2>
+            <form id="form-presenca" action="/api/submit" method="POST">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" name="nome" required><br><br>
+
+                <label for="presenca">Confirmar Presença:</label>
+                <select id="presenca" name="presenca" required>
+                    <option value="Sim">Sim</option>
+                    <option value="Não">Não</option>
+                </select><br><br>
+
+                <label for="comentarios">Comentários:</label>
+                <textarea id="comentarios" name="comentarios"></textarea><br><br>
+
+                <label for="quantidade">Quantidade de Pessoas:</label>
+                <input type="number" id="quantidade" name="quantidade" min="1" required><br><br>
+
+                <button type="submit">Enviar</button>
+            </form>
+        </div>
+
+        <div id="agradecimento">
+            <p>Obrigado por fazer parte deste momento especial. Estamos ansiosos para celebrar com você!</p>
+        </div>
+
+        <footer>
+            <p>Em caso de dúvidas, entre em contato pelo número [Número de Telefone] ou envie um e-mail para [Email].</p>
+        </footer>
+
+        <div id="pixModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closePixQRCode()">&times;</span>
+                <img id="pixQRCode" src="" alt="QR Code Pix">
+                <p>Ou copie a chave Pix: <span id="pixKey">[ChavePix]</span></p>
+                <button onclick="copyPixKey()">Copiar Chave Pix</button>
+            </div>
+        </div>
+    </section>
+
+    <script src="scripts.js"></script>
+
+    <!-- Enviar os dados do formulário para o servidor -->
+    <script>
+        document.getElementById('form-presenca').addEventListener('submit', function(e) {
+            e.preventDefault(); // Previne o envio padrão do formulário
+
+            const nome = document.getElementById('nome').value;
+            const presenca = document.getElementById('presenca').value;
+            const comentarios = document.getElementById('comentarios').value;
+            const quantidade = document.getElementById('quantidade').value;
+            
+            fetch('/api/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ nome, presenca, comentarios, quantidade }),
+            })
+            .then(response => response.text())
+            .then(data => {
+                const resultDiv = document.getElementById('agradecimento');
+                resultDiv.innerHTML = data;
+                document.getElementById('form-presenca').reset(); // Limpa o formulário
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao confirmar presença. Por favor, tente novamente.');
+            });
+        });
+    </script>
+
+    <!-- Script para controle do carrossel -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.querySelector('.gift-container');
+            const leftArrow = document.querySelector('.left-arrow');
+            const rightArrow = document.querySelector('.right-arrow');
+
+            leftArrow.addEventListener('click', () => {
+                container.scrollBy({
+                    left: -container.clientWidth / 2,
+                    behavior: 'smooth'
+                });
+            });
+
+            rightArrow.addEventListener('click', () => {
+                container.scrollBy({
+                    left: container.clientWidth / 2,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
